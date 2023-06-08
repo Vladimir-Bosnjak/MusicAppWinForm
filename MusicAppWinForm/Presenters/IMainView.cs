@@ -1,5 +1,5 @@
 ﻿
-using PresentationLayer.Views.EventArguments;
+using PresentationLayer.DTO;
 
 namespace PresentationLayer.Presenters
 {
@@ -7,7 +7,7 @@ namespace PresentationLayer.Presenters
     {
         void SetAlbumsBindingSource(BindingSource albums);
         event EventHandler GetAll;
-        event Func<object, AddOrEditEventArgs, int> Add;
+        event Func<object, AlbumDTO, int> Add;
         event EventHandler<string> SearchInAlbums;
 
         //--

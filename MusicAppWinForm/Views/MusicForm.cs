@@ -1,5 +1,6 @@
 using PresentationLayer.Presenters;
 using PresentationLayer.Views.EventArguments;
+using PresentationLayer.DTO;
 
 namespace PresentationLayer
 {
@@ -14,7 +15,7 @@ namespace PresentationLayer
 
         public event EventHandler? GetAll;
         public event EventHandler<string>? SearchInAlbums;
-        public event Func<object, AddOrEditEventArgs, int>? Add;
+        public event Func<object, AlbumDTO, int>? Add;
 
         //---------------- helpers --------------------------------------
 
@@ -31,7 +32,7 @@ namespace PresentationLayer
 
         public string Album_Title { get => Txt_AlbumTitle.Text; set => Txt_AlbumTitle.Text = value; }
         public string Artist { get => Txt_Artist.Text; set => Txt_Artist.Text = value; }
-        public String Year { get => Txt_Year.Text; set => Txt_Year.Text = value.ToString(); }
+        public string Year { get => Txt_Year.Text; set => Txt_Year.Text = value; }
         public string Image_URL { get => Txt_ImageURL.Text; set => Txt_ImageURL.Text = value; }
         public string Description { get => Txt_Description.Text; set => Txt_Description.Text = value; }
 
@@ -57,10 +58,18 @@ namespace PresentationLayer
                 MessageBox.Show("Please enter numbers from 1900 to 2200 only!");
             else
             {
-                AddOrEditEventArgs albumData =
-                   new(Album_Title, Artist, year, Txt_ImageURL.Text, Txt_Description.Text);
+                AlbumDTO albumData =
+                   new()
+                   {
+                       Album_Title = Album_Title,
+                       Artist = Artist,
+                       Year = year,
+                       Image_URL = Image_URL,
+                       Description = Description
+                   };
 
                 int? rowsAffected = Add?.Invoke(this, albumData);
+
                 if (CRUD_IsSuccessful)
                 {
                     Lbl_AddSuccess.ForeColor = Color.Green;

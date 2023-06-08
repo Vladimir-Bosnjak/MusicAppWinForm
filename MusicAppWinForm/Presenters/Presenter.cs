@@ -1,6 +1,6 @@
 ﻿using Models;
 using PresentationLayer.Common;
-using PresentationLayer.Views.EventArguments;
+using PresentationLayer.DTO;
 using ServiceLayer;
 
 namespace PresentationLayer.Presenters
@@ -35,14 +35,14 @@ namespace PresentationLayer.Presenters
 
         //--------------- main functionality --------------------------
 
-        public int AddNew(object? sender, AddOrEditEventArgs e)
+        public int AddNew(object? sender, AlbumDTO albumDTO)
         {
             Album theAlbum = new();
-            theAlbum.Album_Title = e.AlbumTitle;
-            theAlbum.Artist = e.Artist;
-            theAlbum.Year = e.Year;
-            theAlbum.Image_URL = e.ImageURL;
-            theAlbum.Description = e.Description;
+            theAlbum.Album_Title = albumDTO.Album_Title;
+            theAlbum.Artist = albumDTO.Artist;
+            theAlbum.Year = albumDTO.Year;
+            theAlbum.Image_URL = albumDTO.Image_URL;
+            theAlbum.Description = albumDTO.Description;
 
             ModelValidator<Album> validation = new();
             if (validation.ValidateModel(theAlbum) == false)
