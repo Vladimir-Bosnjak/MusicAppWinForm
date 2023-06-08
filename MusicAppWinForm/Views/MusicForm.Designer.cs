@@ -276,6 +276,7 @@
             Txt_Year.Name = "Txt_Year";
             Txt_Year.Size = new Size(100, 29);
             Txt_Year.TabIndex = 8;
+            Txt_Year.KeyDown += Txt_Year_KeyDown;
             // 
             // Txt_Artist
             // 

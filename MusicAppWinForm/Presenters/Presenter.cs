@@ -66,6 +66,8 @@ namespace PresentationLayer.Presenters
             SetBindingSource();
         }
 
+        //--
+
         public void SearchInAlbums(object? sender, string phraseToLookFor)
         {
             _albumList = _albumRepository.GetAlbumsByValue(phraseToLookFor);

@@ -1,6 +1,7 @@
 using PresentationLayer.Presenters;
 using PresentationLayer.Views.EventArguments;
 using PresentationLayer.DTO;
+using PresentationLayer.Common;
 
 namespace PresentationLayer
 {
@@ -54,8 +55,8 @@ namespace PresentationLayer
         private void Btn_AddNewAlbum_Click(object sender, EventArgs e)
         {
             bool IsNumber = int.TryParse(Year, out int year);
-            if (!IsNumber || year < 1900 || year > 2200)
-                MessageBox.Show("Please enter numbers from 1900 to 2200 only!");
+            if (!IsNumber)
+                MessageBox.Show("The Year must contain numbers only!");
             else
             {
                 AlbumDTO albumData =
@@ -104,6 +105,21 @@ namespace PresentationLayer
                     MessageBox.Show("Access to the image is currently forbidden.");
                 else
                     MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
+
+        private void Txt_Year_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Back && e.KeyCode != Keys.Left && e.KeyCode != Keys.Right && e.KeyCode != Keys.Delete)
+            {
+                //In this code, we check if the pressed key is either a number key
+                //from the top row(Keys.D0 to Keys.D9)
+                //or a number key from the numpad (Keys.NumPad0 to Keys.NumPad9).
+                bool isNumericKey = (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9) ||
+                                    (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9);
+
+                e.SuppressKeyPress = !isNumericKey;
             }
         }
     }

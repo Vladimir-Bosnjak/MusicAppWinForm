@@ -1,17 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using System.ComponentModel.DataAnnotations;
 
 namespace PresentationLayer.DTO
 {
     public class AlbumDTO
     {
-        public string? Album_Title { get; set; }
-        public string? Artist { get; set; }
+        [MinLength(1), StringLength(100), Required(ErrorMessage = "An Album Title is required (max 100 char).")]
+        public string Album_Title { get; set; } = "";
+
+        [MinLength(1), StringLength(100), Required(AllowEmptyStrings = false,
+            ErrorMessage = "An Artist Name is required (max 50 char).")]
+        public string Artist { get; set; } = "";
+
+        [Required(ErrorMessage = "A Year (album release) is required")]
+        [Range(1900, 2100, ErrorMessage = "The year must be between 1900 and 2200.")]
         public int Year { get; set; }
-        public string? Image_URL { get; set; }
-        public string? Description { get; set; }
+
+        [Url, Required(ErrorMessage = "An URL to an image of the Album is required.")]
+        public string Image_URL { get; set; } = "";
+
+        [MinLength(20), Required(AllowEmptyStrings = false,
+            ErrorMessage = "A description of the Album is required with a minimum of 20 characters.")]
+        public string Description { get; set; } = "";
     }
 }
