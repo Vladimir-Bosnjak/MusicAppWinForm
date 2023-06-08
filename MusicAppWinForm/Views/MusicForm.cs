@@ -99,7 +99,11 @@ namespace PresentationLayer
             // whilst Wikimedia has special kind of identification requirements.
             catch (System.Net.WebException ex)
             {
-                MessageBox.Show(ex.Message.ToString());
+                if (ex.Response is System.Net.HttpWebResponse response &&
+                    response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                    MessageBox.Show("Access to the image is currently forbidden.");
+                else
+                    MessageBox.Show(ex.Message.ToString());
             }
         }
     }
