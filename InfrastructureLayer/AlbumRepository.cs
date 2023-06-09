@@ -27,7 +27,7 @@ namespace PresentationLayer
             {
                 _connection.Open();
                 using var command = new SqlCommand(@"SELECT * FROM Albums", _connection);
-                GetResultingRecords(command, allAlbums); 
+                GetResultingRecords(command, allAlbums);
             }
 
             _connection.Close();
@@ -36,15 +36,15 @@ namespace PresentationLayer
 
         //--------------------------------------------------------------------------
 
-        public IEnumerable<IAlbum> GetAlbumsByValue(string searchText)
+        public IEnumerable<IAlbum> GetAlbumsByValue( string searchText, string columnName = "Album Title")
         {
-            List<IAlbum> foundAlbums = new();
+            List<IAlbum> foundAlbums = new List<IAlbum>();
             using (_connection = new SqlConnection(_connectionString))
             {
                 _connection.Open();
-                using var command = new SqlCommand(@"SELECT * FROM Albums WHERE [Album Title] LIKE @search", _connection);
+                using var command = new SqlCommand($"SELECT * FROM Albums WHERE [{columnName}] LIKE @search", _connection);
                 command.Parameters.AddWithValue("@search", "%" + searchText + "%").SqlDbType = SqlDbType.VarChar;
-                GetResultingRecords(command, foundAlbums); 
+                GetResultingRecords(command, foundAlbums);
             }
 
             _connection.Close();
@@ -58,6 +58,21 @@ namespace PresentationLayer
             using (_connection = new SqlConnection(_connectionString))
             {
                 _connection.Open();
+
+                using (var checkCommand = new SqlCommand
+                    ("IF EXISTS(SELECT 1 FROM Albums WHERE ID = @ID) SELECT 1 ELSE SELECT 0", _connection))
+                {
+                    checkCommand.Parameters.Add("@ID", SqlDbType.Int).Value = album.ID;
+                    bool recordExists = (int)checkCommand.ExecuteScalar() == 1;
+
+                    // If the record already exists, return 0 to indicate no rows affected
+                    if (recordExists)
+                    {
+                        _connection.Close();
+                        return 0;
+                    }
+                }
+
                 using var command = new SqlCommand(
                     @"INSERT into Albums values (@Album_Title, @Artist, @Year, @Image_URL, @Description)", _connection);
                 command.Parameters.Add("@Album_Title", SqlDbType.VarChar).Value = album.Album_Title;
@@ -72,8 +87,51 @@ namespace PresentationLayer
             }
         }
 
-        //------------------------- privates below ---------------------------------
+        //--------------------------------------------------------------------------
 
+        public int Edit(Album album)
+        {
+            using (_connection = new SqlConnection(_connectionString))
+            {
+                _connection.Open();
+                using var command = new SqlCommand(
+                    @"UPDATE Albums SET [Album Title] = @Album_Title, Artist = @Artist, Year = @Year, [Image URL] = @Image_URL, Description = @Description WHERE ID = @ID", _connection);
+                command.Parameters.Add("@ID", SqlDbType.Int).Value = album.ID;
+                command.Parameters.Add("@Album_Title", SqlDbType.VarChar).Value = album.Album_Title;
+                command.Parameters.Add("@Artist", SqlDbType.VarChar).Value = album.Artist;
+                command.Parameters.Add("@Year", SqlDbType.Int).Value = album.Year;
+                command.Parameters.Add("@Image_URL", SqlDbType.VarChar).Value = album.Image_URL;
+                command.Parameters.Add("@Description", SqlDbType.VarChar).Value = album.Description;
+
+                int rowsAffected = command.ExecuteNonQuery();
+                _connection.Close();
+                return rowsAffected;
+            }
+        }
+
+        //--------------------------------------------------------------------------
+
+        public List<string> GetTableColumns(string tableName)
+        {
+            List<string> columnNames = new List<string>();
+            using (_connection = new SqlConnection(_connectionString))
+            {
+                _connection.Open();
+                string query = $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{tableName}'";
+                using var command = new SqlCommand(query, _connection);
+                using SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    string columnName = reader.GetString(0);
+                    columnNames.Add(columnName);
+                }
+            }
+
+            return columnNames;
+        }
+
+
+        //------------------------- privates below ---------------------------------
 
         private static void GetResultingRecords(SqlCommand cmd, List<IAlbum> albums)
         {
@@ -93,5 +151,7 @@ namespace PresentationLayer
                 }
             }
         }
+
+
     }
 }

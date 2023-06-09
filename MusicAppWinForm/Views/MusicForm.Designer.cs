@@ -34,10 +34,13 @@
             Txt_Search = new TextBox();
             AlbumImageBox = new PictureBox();
             panel1 = new Panel();
-            Btn_LoadSelected = new Button();
+            cmbSearchContext = new ComboBox();
             GroupImageBox = new GroupBox();
             Btn_AddNewAlbum = new Button();
-            groupBox1 = new GroupBox();
+            groupAddOrEdit = new GroupBox();
+            btnAbortEdit = new Button();
+            lbl_ID = new Label();
+            label1 = new Label();
             Lbl_AddSuccess = new Label();
             Btn_SaveEdit = new Button();
             label6 = new Label();
@@ -50,11 +53,12 @@
             Txt_Year = new TextBox();
             Txt_Artist = new TextBox();
             Txt_AlbumTitle = new TextBox();
+            label7 = new Label();
             ((System.ComponentModel.ISupportInitialize)DataGridViewAll).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AlbumImageBox).BeginInit();
             panel1.SuspendLayout();
             GroupImageBox.SuspendLayout();
-            groupBox1.SuspendLayout();
+            groupAddOrEdit.SuspendLayout();
             SuspendLayout();
             // 
             // DataGridViewAll
@@ -67,6 +71,7 @@
             DataGridViewAll.Size = new Size(1160, 313);
             DataGridViewAll.TabIndex = 0;
             DataGridViewAll.CellClick += DataGridViewAll_CellClick;
+            DataGridViewAll.CellDoubleClick += DataGridViewAll_CellDoubleClick;
             // 
             // Btn_LoadAllAlbums
             // 
@@ -118,7 +123,8 @@
             // panel1
             // 
             panel1.BorderStyle = BorderStyle.FixedSingle;
-            panel1.Controls.Add(Btn_LoadSelected);
+            panel1.Controls.Add(label7);
+            panel1.Controls.Add(cmbSearchContext);
             panel1.Controls.Add(Btn_LoadAllAlbums);
             panel1.Controls.Add(Btn_SearchInAlbums);
             panel1.Controls.Add(Txt_Search);
@@ -127,15 +133,15 @@
             panel1.Size = new Size(768, 118);
             panel1.TabIndex = 6;
             // 
-            // Btn_LoadSelected
+            // cmbSearchContext
             // 
-            Btn_LoadSelected.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            Btn_LoadSelected.Location = new Point(636, 40);
-            Btn_LoadSelected.Name = "Btn_LoadSelected";
-            Btn_LoadSelected.Size = new Size(125, 64);
-            Btn_LoadSelected.TabIndex = 4;
-            Btn_LoadSelected.Text = "Load Selected";
-            Btn_LoadSelected.UseVisualStyleBackColor = true;
+            cmbSearchContext.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbSearchContext.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            cmbSearchContext.FormattingEnabled = true;
+            cmbSearchContext.Location = new Point(544, 74);
+            cmbSearchContext.Name = "cmbSearchContext";
+            cmbSearchContext.Size = new Size(217, 29);
+            cmbSearchContext.TabIndex = 4;
             // 
             // GroupImageBox
             // 
@@ -162,27 +168,61 @@
             Btn_AddNewAlbum.UseVisualStyleBackColor = false;
             Btn_AddNewAlbum.Click += Btn_AddNewAlbum_Click;
             // 
-            // groupBox1
+            // groupAddOrEdit
             // 
-            groupBox1.Controls.Add(Lbl_AddSuccess);
-            groupBox1.Controls.Add(Btn_SaveEdit);
-            groupBox1.Controls.Add(label6);
-            groupBox1.Controls.Add(label5);
-            groupBox1.Controls.Add(label4);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(Txt_Description);
-            groupBox1.Controls.Add(Txt_ImageURL);
-            groupBox1.Controls.Add(Txt_Year);
-            groupBox1.Controls.Add(Txt_Artist);
-            groupBox1.Controls.Add(Txt_AlbumTitle);
-            groupBox1.Controls.Add(Btn_AddNewAlbum);
-            groupBox1.Location = new Point(404, 471);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(768, 241);
-            groupBox1.TabIndex = 4;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Add or Edit an Album";
+            groupAddOrEdit.Controls.Add(btnAbortEdit);
+            groupAddOrEdit.Controls.Add(lbl_ID);
+            groupAddOrEdit.Controls.Add(label1);
+            groupAddOrEdit.Controls.Add(Lbl_AddSuccess);
+            groupAddOrEdit.Controls.Add(Btn_SaveEdit);
+            groupAddOrEdit.Controls.Add(label6);
+            groupAddOrEdit.Controls.Add(label5);
+            groupAddOrEdit.Controls.Add(label4);
+            groupAddOrEdit.Controls.Add(label3);
+            groupAddOrEdit.Controls.Add(label2);
+            groupAddOrEdit.Controls.Add(Txt_Description);
+            groupAddOrEdit.Controls.Add(Txt_ImageURL);
+            groupAddOrEdit.Controls.Add(Txt_Year);
+            groupAddOrEdit.Controls.Add(Txt_Artist);
+            groupAddOrEdit.Controls.Add(Txt_AlbumTitle);
+            groupAddOrEdit.Controls.Add(Btn_AddNewAlbum);
+            groupAddOrEdit.Location = new Point(404, 471);
+            groupAddOrEdit.Name = "groupAddOrEdit";
+            groupAddOrEdit.Size = new Size(768, 241);
+            groupAddOrEdit.TabIndex = 4;
+            groupAddOrEdit.TabStop = false;
+            groupAddOrEdit.Text = "Add or Edit an Album";
+            // 
+            // btnAbortEdit
+            // 
+            btnAbortEdit.ForeColor = Color.Red;
+            btnAbortEdit.Location = new Point(307, 100);
+            btnAbortEdit.Name = "btnAbortEdit";
+            btnAbortEdit.Size = new Size(187, 29);
+            btnAbortEdit.TabIndex = 21;
+            btnAbortEdit.Text = "Abort Edit";
+            btnAbortEdit.UseVisualStyleBackColor = true;
+            btnAbortEdit.Click += btnAbortEdit_Click;
+            // 
+            // lbl_ID
+            // 
+            lbl_ID.AutoSize = true;
+            lbl_ID.ForeColor = SystemColors.GrayText;
+            lbl_ID.Location = new Point(115, 208);
+            lbl_ID.Name = "lbl_ID";
+            lbl_ID.Size = new Size(18, 15);
+            lbl_ID.TabIndex = 20;
+            lbl_ID.Text = "ID";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.ForeColor = SystemColors.GrayText;
+            label1.Location = new Point(17, 208);
+            label1.Name = "label1";
+            label1.Size = new Size(21, 15);
+            label1.TabIndex = 19;
+            label1.Text = "ID:";
             // 
             // Lbl_AddSuccess
             // 
@@ -202,6 +242,7 @@
             Btn_SaveEdit.TabIndex = 17;
             Btn_SaveEdit.Text = "Commit Edit";
             Btn_SaveEdit.UseVisualStyleBackColor = true;
+            Btn_SaveEdit.Click += Btn_SaveEdit_Click;
             // 
             // label6
             // 
@@ -258,6 +299,7 @@
             Txt_Description.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             Txt_Description.Location = new Point(115, 170);
             Txt_Description.Name = "Txt_Description";
+            Txt_Description.ReadOnly = true;
             Txt_Description.Size = new Size(500, 29);
             Txt_Description.TabIndex = 10;
             // 
@@ -266,6 +308,7 @@
             Txt_ImageURL.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             Txt_ImageURL.Location = new Point(115, 135);
             Txt_ImageURL.Name = "Txt_ImageURL";
+            Txt_ImageURL.ReadOnly = true;
             Txt_ImageURL.Size = new Size(500, 29);
             Txt_ImageURL.TabIndex = 9;
             // 
@@ -274,6 +317,7 @@
             Txt_Year.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             Txt_Year.Location = new Point(115, 100);
             Txt_Year.Name = "Txt_Year";
+            Txt_Year.ReadOnly = true;
             Txt_Year.Size = new Size(100, 29);
             Txt_Year.TabIndex = 8;
             Txt_Year.KeyDown += Txt_Year_KeyDown;
@@ -283,6 +327,7 @@
             Txt_Artist.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             Txt_Artist.Location = new Point(115, 65);
             Txt_Artist.Name = "Txt_Artist";
+            Txt_Artist.ReadOnly = true;
             Txt_Artist.Size = new Size(500, 29);
             Txt_Artist.TabIndex = 7;
             // 
@@ -291,27 +336,39 @@
             Txt_AlbumTitle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             Txt_AlbumTitle.Location = new Point(115, 30);
             Txt_AlbumTitle.Name = "Txt_AlbumTitle";
+            Txt_AlbumTitle.ReadOnly = true;
             Txt_AlbumTitle.Size = new Size(500, 29);
             Txt_AlbumTitle.TabIndex = 6;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            label7.Location = new Point(544, 56);
+            label7.Name = "label7";
+            label7.Size = new Size(105, 15);
+            label7.TabIndex = 5;
+            label7.Text = "Search in column:";
             // 
             // MusicForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1184, 739);
-            Controls.Add(groupBox1);
+            Controls.Add(groupAddOrEdit);
             Controls.Add(GroupImageBox);
             Controls.Add(panel1);
             Controls.Add(DataGridViewAll);
             Name = "MusicForm";
             Text = "Music App";
+            Load += MusicForm_Load;
             ((System.ComponentModel.ISupportInitialize)DataGridViewAll).EndInit();
             ((System.ComponentModel.ISupportInitialize)AlbumImageBox).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             GroupImageBox.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
+            groupAddOrEdit.ResumeLayout(false);
+            groupAddOrEdit.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -324,7 +381,7 @@
         private PictureBox AlbumImageBox;
         private Panel panel1;
         private GroupBox GroupImageBox;
-        private GroupBox groupBox1;
+        private GroupBox groupAddOrEdit;
         private Button Btn_AddNewAlbum;
         private TextBox Txt_Artist;
         private TextBox Txt_AlbumTitle;
@@ -337,7 +394,11 @@
         private TextBox Txt_ImageURL;
         private TextBox Txt_Year;
         private Button Btn_SaveEdit;
-        private Button Btn_LoadSelected;
         private Label Lbl_AddSuccess;
+        private Label lbl_ID;
+        private Label label1;
+        private Button btnAbortEdit;
+        private ComboBox cmbSearchContext;
+        private Label label7;
     }
 }

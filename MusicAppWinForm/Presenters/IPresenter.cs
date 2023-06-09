@@ -4,9 +4,8 @@ namespace PresentationLayer.Presenters
 {
     public interface IPresenter
     {
-        int AddNew(object? sender, AlbumDTO album);
-        void GetAll(object? sender, EventArgs e);
-        void SearchInAlbums(object? sender, string phraseToLookFor);
-        void SetBindingSource();
+        int OnAdd(object? sender, AlbumDTO album);
+        void OnGetAll(object? sender, EventArgs e);
+        void OnSearchInAlbums(object? sender, string searchPhrase, string tableName);
     }
 }

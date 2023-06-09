@@ -5,6 +5,9 @@ namespace PresentationLayer.DTO
 {
     public class AlbumDTO
     {
+        [Key]
+        public int ID { get; set; }
+
         [MinLength(1), StringLength(100), Required(ErrorMessage = "An Album Title is required (max 100 char).")]
         public string Album_Title { get; set; } = "";
 
@@ -14,7 +17,7 @@ namespace PresentationLayer.DTO
 
         [Required(ErrorMessage = "A Year (album release) is required")]
         [Range(1900, 2100, ErrorMessage = "The year must be between 1900 and 2200.")]
-        public int Year { get; set; }
+        public int Year { get; set; } = 0;
 
         [Url, Required(ErrorMessage = "An URL to an image of the Album is required.")]
         public string Image_URL { get; set; } = "";
