@@ -19,7 +19,7 @@ namespace PresentationLayer
 
             string connectionString = "Data Source=.;Initial Catalog=Music;Integrated Security=True";
             IAlbumRepository albumRepository = new AlbumRepository(connectionString);
-            IMainView mainView = new MusicForm();
+            IMusicFormView mainView = new MusicForm();
             new Presenter(mainView, albumRepository);
 
             //--------------------------------------------

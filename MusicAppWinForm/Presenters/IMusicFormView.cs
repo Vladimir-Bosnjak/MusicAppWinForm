@@ -1,18 +1,17 @@
-﻿
-using PresentationLayer.DTO;
+﻿using PresentationLayer.EventArguments;
 
 namespace PresentationLayer.Presenters
 {
-    public interface IMainView
+    public interface IMusicFormView
     {
         void SetAlbumsBindingSource(BindingSource albums);
         void SetAlbumColumnNamesBindingSource(BindingSource albumColumns);
 
         event EventHandler GetAll;
-        event Func<object, AlbumDTO, int> Add;
-        event Func<object, AlbumDTO, int> UpdateAlbumEvent;
-        event Action <object, string, string?> SearchInAlbums;
-        event EventHandler GetColumnNamesFromAlbumTable;
+        public event EventHandler<AlbumDataEventArgs>? AddEvent;
+        event EventHandler<AlbumDataEventArgs> UpdateAlbumEvent;
+        public event EventHandler<SearchEventArgs>? SearchInAlbums;
+        event EventHandler GetColumnNamesFromAlbumTableEvent;
 
         //--
 
@@ -25,5 +24,6 @@ namespace PresentationLayer.Presenters
 
         public string Message { get; set; }
         public bool CRUD_IsSuccessful { get; set; }
+        public int RowsAffected { get; set; }
     }
 }

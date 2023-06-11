@@ -1,15 +1,16 @@
 ﻿using Models;
 using PresentationLayer.Common;
-using PresentationLayer.DTO;
+using PresentationLayer.EventArguments;
 using ServiceLayer;
 
 namespace PresentationLayer.Presenters
 {
     //This Presenter class is for the main view.
     //Assuming each view has its own presenter.
+
     public class Presenter : IPresenter
     {
-        private readonly IMainView _mainView;
+        private readonly IMusicFormView _mainView;
         private readonly IAlbumRepository _albumRepository;
         private IEnumerable<IAlbum>? _albumList;
         private readonly BindingSource _albumBindingSource;
@@ -17,7 +18,7 @@ namespace PresentationLayer.Presenters
 
         //--------------------------------------------------------------
 
-        public Presenter(IMainView mainView, IAlbumRepository albumRepository)
+        public Presenter(IMusicFormView mainView, IAlbumRepository albumRepository)
         {
             _albumBindingSource = new BindingSource();
             _columnNamesBindingsource = new BindingSource();
@@ -25,41 +26,79 @@ namespace PresentationLayer.Presenters
             _albumRepository = albumRepository;
             AssociateEvents();
         }
-
+        private void AssociateEvents()
+        {
+            _mainView.GetAll += OnGetAll;
+            _mainView.SearchInAlbums += OnSearchInAlbums;
+            _mainView.AddEvent += OnAdd;
+            _mainView.UpdateAlbumEvent += OnUpdate;
+            _mainView.GetColumnNamesFromAlbumTableEvent += OnGetColumnNamesFromTable;
+        }
 
         //--------------- main functionality ---------------------------
 
-        public int OnAdd(object? sender, AlbumDTO albumDTO)
+        public void OnAdd(object? sender, AlbumDataEventArgs album)
         {
-            Album theAlbum = new();
-
-            theAlbum.ID = albumDTO.ID;
-            theAlbum.Album_Title = albumDTO.Album_Title;
-            theAlbum.Artist = albumDTO.Artist;
-            theAlbum.Year = albumDTO.Year;
-            theAlbum.Image_URL = albumDTO.Image_URL;
-            theAlbum.Description = albumDTO.Description;
+            Album theAlbum = new()
+            {
+                ID = album.ID,
+                Album_Title = album.Album_Title,
+                Artist = album.Artist,
+                Year = album.Year,
+                Image_URL = album.Image_URL,
+                Description = album.Description
+            };
 
             ModelValidator<Album> validation = new();
-            if (validation.ValidateModel(theAlbum) == false)
+            if (validation.ValidateModel(theAlbum) == false) //validation failed
             {
                 _mainView.Message = validation.GetFormattedValidationResults();
                 _mainView.CRUD_IsSuccessful = false;
-                return 0;
+                _mainView.RowsAffected = 0;
             }
             else
             {
-                int recordsAffected = _albumRepository.AddAlbum(theAlbum);
-                if (recordsAffected == 0)
+                _mainView.RowsAffected = _albumRepository.AddAlbum(theAlbum);
+
+                //Query has been executed but nothing was added
+                if (_mainView.RowsAffected == 0)
                 {
                     _mainView.Message =
                         "No records were affected. Did you try to add an album with the same ID?";
                     _mainView.CRUD_IsSuccessful = false;
                 }
                 else
+                {
                     _mainView.CRUD_IsSuccessful = true;
+                }
+            }
+        }
 
-                return recordsAffected;
+        //--
+
+        public void OnUpdate(object? sender, AlbumDataEventArgs album)
+        {
+            Album theAlbum = new();
+
+            theAlbum.ID = album.ID;
+            theAlbum.Album_Title = album.Album_Title;
+            theAlbum.Artist = album.Artist;
+            theAlbum.Year = album.Year; ;
+            theAlbum.Image_URL = album.Image_URL;
+            theAlbum.Description = album.Description;
+
+            ModelValidator<Album> validation = new();
+
+            if (validation.ValidateModel(theAlbum) == false) //validation failed
+            {
+                _mainView.Message = validation.GetFormattedValidationResults();
+                _mainView.CRUD_IsSuccessful = false;
+                _mainView.RowsAffected = 0;
+            }
+            else
+            {
+                _mainView.CRUD_IsSuccessful = true;
+                _mainView.RowsAffected = _albumRepository.Edit(theAlbum);
             }
         }
 
@@ -68,59 +107,35 @@ namespace PresentationLayer.Presenters
         public void OnGetAll(object? sender, EventArgs e)
         {
             _albumList = _albumRepository.GetAll();
+            _mainView.RowsAffected = _albumList.Count();
             SetGridViewBindingSource();
         }
 
         //--
 
-        public void OnSearchInAlbums(object? sender, string searchPhrase, string? tableName)
+        public void OnSearchInAlbums(object? sender, SearchEventArgs e)
         {
-            if (!string.IsNullOrEmpty(tableName))
+            if (!string.IsNullOrEmpty(e.SearchColumn))
             {
-                _albumList = _albumRepository.GetAlbumsByValue(searchPhrase, tableName);
+                _albumList = _albumRepository.GetAlbumsByValue(e.SearchPhrase, e.SearchColumn);
+                _mainView.RowsAffected = _albumList.Count();
                 SetGridViewBindingSource();
             }
             else
             {
                 _mainView.Message =
-                    "No records were affected: the table name was NULL or EMPTY (no table name)";
+                    "Saerch was HALTED: the table name was NULL or EMPTY (no table name)";
+                _mainView.RowsAffected = 0;
             }
         }
 
         //--
 
-        public int OnUpdate(object? sender, AlbumDTO albumDTO)
-        {
-            Album theAlbum = new();
-
-            theAlbum.ID = albumDTO.ID;
-            theAlbum.Album_Title = albumDTO.Album_Title;
-            theAlbum.Artist = albumDTO.Artist;
-            theAlbum.Year = albumDTO.Year; ;
-            theAlbum.Image_URL = albumDTO.Image_URL;
-            theAlbum.Description = albumDTO.Description;
-
-            ModelValidator<Album> validation = new();
-
-            if (validation.ValidateModel(theAlbum) == false)
-            {
-                _mainView.Message = validation.GetFormattedValidationResults();
-                _mainView.CRUD_IsSuccessful = false;
-                return 0;
-            }
-            else
-            {
-                _mainView.CRUD_IsSuccessful = true;
-                return _albumRepository.Edit(theAlbum);
-            }
-        }
-
-        //--
         //!!!!!!!!!! Temporary, I'll think of later what to do with this !!!!!!!!!!!
         public void OnGetColumnNamesFromTable(object? sender, EventArgs e)
         {
             _columnNamesBindingsource.DataSource = _albumRepository.GetTableColumns("Albums");
-            SetAlbumColumnNamesBindingSource();
+            _mainView.SetAlbumColumnNamesBindingSource(_columnNamesBindingsource);
         }
 
         //------------------helpers / utilities ------------------------
@@ -130,15 +145,6 @@ namespace PresentationLayer.Presenters
             _albumBindingSource.DataSource = _albumList;
             _mainView.SetAlbumsBindingSource(_albumBindingSource);
         }
-        private void SetAlbumColumnNamesBindingSource() =>
-            _mainView.SetAlbumColumnNamesBindingSource(_columnNamesBindingsource);
-        private void AssociateEvents()
-        {
-            _mainView.GetAll += OnGetAll;
-            _mainView.SearchInAlbums += OnSearchInAlbums;
-            _mainView.Add += OnAdd;
-            _mainView.UpdateAlbumEvent += OnUpdate;
-            _mainView.GetColumnNamesFromAlbumTable += OnGetColumnNamesFromTable;
-        }
+
     }
 }

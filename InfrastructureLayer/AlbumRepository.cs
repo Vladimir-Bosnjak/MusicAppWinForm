@@ -59,6 +59,7 @@ namespace PresentationLayer
             {
                 _connection.Open();
 
+                //Does the record (by ID) already exist?
                 using (var checkCommand = new SqlCommand
                     ("IF EXISTS(SELECT 1 FROM Albums WHERE ID = @ID) SELECT 1 ELSE SELECT 0", _connection))
                 {

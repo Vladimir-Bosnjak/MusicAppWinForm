@@ -1,11 +1,12 @@
-﻿using PresentationLayer.DTO;
+﻿using PresentationLayer.EventArguments;
 
 namespace PresentationLayer.Presenters
 {
     public interface IPresenter
     {
-        int OnAdd(object? sender, AlbumDTO album);
+        void OnAdd(object? sender, AlbumDataEventArgs album);
+        void OnUpdate(object? sender, AlbumDataEventArgs album);
         void OnGetAll(object? sender, EventArgs e);
-        void OnSearchInAlbums(object? sender, string searchPhrase, string tableName);
+        void OnSearchInAlbums(object? sender, SearchEventArgs e);
     }
 }

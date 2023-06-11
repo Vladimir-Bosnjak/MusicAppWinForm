@@ -1,9 +1,9 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace PresentationLayer.DTO
+namespace PresentationLayer.EventArguments
 {
-    public class AlbumDTO
+    public class AlbumDataEventArgs : EventArgs
     {
         [Key]
         public int ID { get; set; }
