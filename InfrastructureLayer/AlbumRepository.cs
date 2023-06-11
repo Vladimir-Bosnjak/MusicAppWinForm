@@ -19,9 +19,9 @@ namespace PresentationLayer
 
         //--------------------------------------------------------------------------
 
-        public IEnumerable<IAlbum> GetAll()
+        public IEnumerable<Album> GetAll()
         {
-            List<IAlbum> allAlbums = new();
+            List<Album> allAlbums = new();
 
             using (_connection = new SqlConnection(_connectionString))
             {
@@ -36,9 +36,9 @@ namespace PresentationLayer
 
         //--------------------------------------------------------------------------
 
-        public IEnumerable<IAlbum> GetAlbumsByValue( string searchText, string columnName)
+        public IEnumerable<Album> GetAlbumsByValue( string searchText, string columnName)
         {
-            List<IAlbum> foundAlbums = new();
+            List<Album> foundAlbums = new();
             using (_connection = new SqlConnection(_connectionString))
             {
                 _connection.Open();
@@ -54,7 +54,7 @@ namespace PresentationLayer
 
         //--------------------------------------------------------------------------
 
-        public int AddAlbum(IAlbum album)
+        public int AddAlbum(Album album)
         {
             using (_connection = new SqlConnection(_connectionString))
             {
@@ -135,7 +135,7 @@ namespace PresentationLayer
 
         //------------------------- privates below ---------------------------------
 
-        private static void GetResultingRecords(SqlCommand cmd, List<IAlbum> albums)
+        private static void GetResultingRecords(SqlCommand cmd, List<Album> albums)
         {
             using (SqlDataReader reader = cmd.ExecuteReader())
             {

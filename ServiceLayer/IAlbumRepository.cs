@@ -4,9 +4,9 @@ namespace ServiceLayer
 {
     public interface IAlbumRepository
     {
-        IEnumerable<IAlbum> GetAll();
-        IEnumerable<IAlbum> GetAlbumsByValue(string search, string columnName);
-        int AddAlbum(IAlbum album);
+        IEnumerable<Album> GetAll();
+        IEnumerable<Album> GetAlbumsByValue(string search, string columnName);
+        int AddAlbum(Album album);
         int Edit(Album theAlbum);
         List<string> GetTableColumns(string tableName);
     }

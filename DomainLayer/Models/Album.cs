@@ -2,7 +2,7 @@
 
 namespace Models
 {
-    public class Album : IAlbum
+    public class Album 
     {
         [Key]
         public int ID { get; set; }

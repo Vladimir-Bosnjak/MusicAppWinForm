@@ -12,7 +12,7 @@ namespace PresentationLayer.Presenters
     {
         private readonly IMusicFormView _musicFormView;
         private readonly IAlbumRepository _albumRepository;
-        private IEnumerable<IAlbum>? _albumList;
+        private IEnumerable<Album>? _albumList;
         private readonly BindingSource _albumBindingSource;
         private readonly BindingSource _columnNamesBindingsource;
 
