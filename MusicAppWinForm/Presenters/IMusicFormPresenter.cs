@@ -2,7 +2,7 @@
 
 namespace PresentationLayer.Presenters
 {
-    public interface IPresenter
+    public interface IMusicFormPresenter
     {
         void OnAdd(object? sender, AlbumDataEventArgs album);
         void OnUpdate(object? sender, AlbumDataEventArgs album);

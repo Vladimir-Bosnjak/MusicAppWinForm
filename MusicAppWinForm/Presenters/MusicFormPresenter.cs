@@ -8,9 +8,9 @@ namespace PresentationLayer.Presenters
     //This Presenter class is for the main view.
     //Assuming each view has its own presenter.
 
-    public class Presenter : IPresenter
+    public class MusicFormPresenter : IMusicFormPresenter
     {
-        private readonly IMusicFormView _mainView;
+        private readonly IMusicFormView _musicFormView;
         private readonly IAlbumRepository _albumRepository;
         private IEnumerable<IAlbum>? _albumList;
         private readonly BindingSource _albumBindingSource;
@@ -18,21 +18,21 @@ namespace PresentationLayer.Presenters
 
         //--------------------------------------------------------------
 
-        public Presenter(IMusicFormView mainView, IAlbumRepository albumRepository)
+        public MusicFormPresenter(IMusicFormView mainView, IAlbumRepository albumRepository)
         {
             _albumBindingSource = new BindingSource();
             _columnNamesBindingsource = new BindingSource();
-            _mainView = mainView;
+            _musicFormView = mainView;
             _albumRepository = albumRepository;
             AssociateEvents();
         }
         private void AssociateEvents()
         {
-            _mainView.GetAll += OnGetAll;
-            _mainView.SearchInAlbums += OnSearchInAlbums;
-            _mainView.AddEvent += OnAdd;
-            _mainView.UpdateAlbumEvent += OnUpdate;
-            _mainView.GetColumnNamesFromAlbumTableEvent += OnGetColumnNamesFromTable;
+            _musicFormView.GetAll += OnGetAll;
+            _musicFormView.SearchInAlbumsEvent += OnSearchInAlbums;
+            _musicFormView.AddEvent += OnAdd;
+            _musicFormView.UpdateAlbumEvent += OnUpdate;
+            _musicFormView.GetColumnNamesFromAlbumTableEvent += OnGetColumnNamesFromTableAlbums;
         }
 
         //--------------- main functionality ---------------------------
@@ -52,24 +52,24 @@ namespace PresentationLayer.Presenters
             ModelValidator<Album> validation = new();
             if (validation.ValidateModel(theAlbum) == false) //validation failed
             {
-                _mainView.Message = validation.GetFormattedValidationResults();
-                _mainView.CRUD_IsSuccessful = false;
-                _mainView.RowsAffected = 0;
+                _musicFormView.Message = validation.GetFormattedValidationResults();
+                _musicFormView.CRUD_IsSuccessful = false;
+                _musicFormView.RowsAffected = 0;
             }
-            else
+            else //data validated
             {
-                _mainView.RowsAffected = _albumRepository.AddAlbum(theAlbum);
+                _musicFormView.RowsAffected = _albumRepository.AddAlbum(theAlbum);
 
                 //Query has been executed but nothing was added
-                if (_mainView.RowsAffected == 0)
+                if (_musicFormView.RowsAffected == 0)
                 {
-                    _mainView.Message =
+                    _musicFormView.Message =
                         "No records were affected. Did you try to add an album with the same ID?";
-                    _mainView.CRUD_IsSuccessful = false;
+                    _musicFormView.CRUD_IsSuccessful = false;
                 }
                 else
                 {
-                    _mainView.CRUD_IsSuccessful = true;
+                    _musicFormView.CRUD_IsSuccessful = true;
                 }
             }
         }
@@ -78,12 +78,14 @@ namespace PresentationLayer.Presenters
 
         public void OnUpdate(object? sender, AlbumDataEventArgs album)
         {
-            Album theAlbum = new();
-
-            theAlbum.ID = album.ID;
-            theAlbum.Album_Title = album.Album_Title;
-            theAlbum.Artist = album.Artist;
-            theAlbum.Year = album.Year; ;
+            Album theAlbum = new()
+            {
+                ID = album.ID,
+                Album_Title = album.Album_Title,
+                Artist = album.Artist,
+                Year = album.Year
+            };
+            ;
             theAlbum.Image_URL = album.Image_URL;
             theAlbum.Description = album.Description;
 
@@ -91,14 +93,14 @@ namespace PresentationLayer.Presenters
 
             if (validation.ValidateModel(theAlbum) == false) //validation failed
             {
-                _mainView.Message = validation.GetFormattedValidationResults();
-                _mainView.CRUD_IsSuccessful = false;
-                _mainView.RowsAffected = 0;
+                _musicFormView.Message = validation.GetFormattedValidationResults();
+                _musicFormView.CRUD_IsSuccessful = false;
+                _musicFormView.RowsAffected = 0;
             }
-            else
+            else //validation success
             {
-                _mainView.CRUD_IsSuccessful = true;
-                _mainView.RowsAffected = _albumRepository.Edit(theAlbum);
+                _musicFormView.CRUD_IsSuccessful = true;
+                _musicFormView.RowsAffected = _albumRepository.Edit(theAlbum);
             }
         }
 
@@ -107,7 +109,7 @@ namespace PresentationLayer.Presenters
         public void OnGetAll(object? sender, EventArgs e)
         {
             _albumList = _albumRepository.GetAll();
-            _mainView.RowsAffected = _albumList.Count();
+            _musicFormView.RowsAffected = _albumList.Count();
             SetGridViewBindingSource();
         }
 
@@ -118,24 +120,22 @@ namespace PresentationLayer.Presenters
             if (!string.IsNullOrEmpty(e.SearchColumn))
             {
                 _albumList = _albumRepository.GetAlbumsByValue(e.SearchPhrase, e.SearchColumn);
-                _mainView.RowsAffected = _albumList.Count();
+                _musicFormView.RowsAffected = _albumList.Count();
                 SetGridViewBindingSource();
             }
             else
             {
-                _mainView.Message =
+                _musicFormView.Message =
                     "Saerch was HALTED: the table name was NULL or EMPTY (no table name)";
-                _mainView.RowsAffected = 0;
+                _musicFormView.RowsAffected = 0;
             }
         }
 
-        //--
-
-        //!!!!!!!!!! Temporary, I'll think of later what to do with this !!!!!!!!!!!
-        public void OnGetColumnNamesFromTable(object? sender, EventArgs e)
+        public void OnGetColumnNamesFromTableAlbums(object? sender, EventArgs e)
         {
+            //!!! The problem is that the table "Albums" is hardcoded here. Fix this.
             _columnNamesBindingsource.DataSource = _albumRepository.GetTableColumns("Albums");
-            _mainView.SetAlbumColumnNamesBindingSource(_columnNamesBindingsource);
+            _musicFormView.SetAlbumColumnNamesBindingSource(_columnNamesBindingsource);
         }
 
         //------------------helpers / utilities ------------------------
@@ -143,7 +143,7 @@ namespace PresentationLayer.Presenters
         private void SetGridViewBindingSource()
         {
             _albumBindingSource.DataSource = _albumList;
-            _mainView.SetAlbumsBindingSource(_albumBindingSource);
+            _musicFormView.SetAlbumsBindingSource(_albumBindingSource);
         }
 
     }

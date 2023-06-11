@@ -16,7 +16,7 @@ namespace PresentationLayer
         //----------------- Events et al --------------------------------
 
         public event EventHandler? GetAll;
-        public event EventHandler<SearchEventArgs>? SearchInAlbums;
+        public event EventHandler<SearchEventArgs>? SearchInAlbumsEvent;
         public event EventHandler<AlbumDataEventArgs>? AddEvent;
         public event EventHandler<AlbumDataEventArgs>? UpdateAlbumEvent;
         public event EventHandler? GetColumnNamesFromAlbumTableEvent;
@@ -77,7 +77,6 @@ namespace PresentationLayer
         public string SearchPhrase { get => Txt_Search.Text; set => Txt_Search.Text = value.ToString(); }
         public string? ColumnName { get => cmbSearchContext.SelectedValue.ToString(); }
 
-
         //----------------- main functionalities --------------------------
 
         //Set datasource with album(s) to show in DataGridView
@@ -98,7 +97,7 @@ namespace PresentationLayer
             if (!string.IsNullOrEmpty(ColumnName))
             {
                 SearchEventArgs searchArgs = new(SearchPhrase, ColumnName);
-                SearchInAlbums?.Invoke(this, searchArgs);
+                SearchInAlbumsEvent?.Invoke(this, searchArgs);
                 lblRowCountStatus.Text = "Records found: " + RowsAffected;
             }
         }
@@ -218,9 +217,8 @@ namespace PresentationLayer
             }
         }
 
-        private void MusicForm_Load(object sender, EventArgs e)
-        {
+        private void MusicForm_Load(object sender, EventArgs e) =>
             GetColumnNamesFromAlbumTableEvent?.Invoke(this, e);
-        }
+
     }
 }

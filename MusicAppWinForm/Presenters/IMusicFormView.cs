@@ -10,7 +10,7 @@ namespace PresentationLayer.Presenters
         event EventHandler GetAll;
         public event EventHandler<AlbumDataEventArgs>? AddEvent;
         event EventHandler<AlbumDataEventArgs> UpdateAlbumEvent;
-        public event EventHandler<SearchEventArgs>? SearchInAlbums;
+        public event EventHandler<SearchEventArgs>? SearchInAlbumsEvent;
         event EventHandler GetColumnNamesFromAlbumTableEvent;
 
         //--

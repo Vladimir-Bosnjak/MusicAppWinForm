@@ -36,13 +36,14 @@ namespace PresentationLayer
 
         //--------------------------------------------------------------------------
 
-        public IEnumerable<IAlbum> GetAlbumsByValue( string searchText, string columnName = "Album Title")
+        public IEnumerable<IAlbum> GetAlbumsByValue( string searchText, string columnName)
         {
-            List<IAlbum> foundAlbums = new List<IAlbum>();
+            List<IAlbum> foundAlbums = new();
             using (_connection = new SqlConnection(_connectionString))
             {
                 _connection.Open();
-                using var command = new SqlCommand($"SELECT * FROM Albums WHERE [{columnName}] LIKE @search", _connection);
+                using var command = new SqlCommand
+                    ($"SELECT * FROM Albums WHERE [{columnName}] LIKE @search", _connection);
                 command.Parameters.AddWithValue("@search", "%" + searchText + "%").SqlDbType = SqlDbType.VarChar;
                 GetResultingRecords(command, foundAlbums);
             }
