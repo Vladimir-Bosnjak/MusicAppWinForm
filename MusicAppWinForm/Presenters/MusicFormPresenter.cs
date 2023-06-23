@@ -133,8 +133,9 @@ namespace PresentationLayer.Presenters
 
         public void OnGetColumnNamesFromTableAlbums(object? sender, EventArgs e)
         {
-            //!!! The problem is that the table "Albums" is hardcoded here. Fix this.
-            _columnNamesBindingsource.DataSource = _albumRepository.GetTableColumns("Albums");
+            string tableName = Properties.Settings.Default.TableName;
+            _columnNamesBindingsource.DataSource = _albumRepository.
+                GetTableColumns(tableName);
             _musicFormView.SetAlbumColumnNamesBindingSource(_columnNamesBindingsource);
         }
 
