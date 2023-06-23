@@ -32,7 +32,7 @@ namespace PresentationLayer.Presenters
             _musicFormView.SearchInAlbumsEvent += OnSearchInAlbums;
             _musicFormView.AddEvent += OnAdd;
             _musicFormView.UpdateAlbumEvent += OnUpdate;
-            _musicFormView.GetColumnNamesFromAlbumTableEvent += OnGetColumnNamesFromTableAlbums;
+            _musicFormView.GetColumnNamesFromAlbumTableEvent += OnGetColumnNamesFromTable;
         }
 
         //--------------- main functionality ---------------------------
@@ -131,9 +131,11 @@ namespace PresentationLayer.Presenters
             }
         }
 
-        public void OnGetColumnNamesFromTableAlbums(object? sender, EventArgs e)
+        public void OnGetColumnNamesFromTable(object? sender, EventArgs e)
         {
+            //In Application Settings
             string tableName = Properties.Settings.Default.TableName;
+
             _columnNamesBindingsource.DataSource = _albumRepository.
                 GetTableColumns(tableName);
             _musicFormView.SetAlbumColumnNamesBindingSource(_columnNamesBindingsource);
