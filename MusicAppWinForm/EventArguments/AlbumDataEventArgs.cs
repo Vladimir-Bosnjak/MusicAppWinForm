@@ -12,7 +12,7 @@ namespace PresentationLayer.EventArguments
         public string Album_Title { get; set; } = "";
 
         [MinLength(1), StringLength(100), Required(AllowEmptyStrings = false,
-            ErrorMessage = "An Artist Name is required (max 50 char).")]
+            ErrorMessage = "An Artist Name is required (max 100 char).")]
         public string Artist { get; set; } = "";
 
         [Required(ErrorMessage = "A Year (album release) is required")]
